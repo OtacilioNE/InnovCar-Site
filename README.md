@@ -1,68 +1,157 @@
-# 🚀 INNOV CAR - Sistema de Agendamento Online
+# 🚗 INNOV CAR — Sistema de Agendamento Online
 
-Este projeto é um sistema de agendamento online completo para a **INNOV CAR Estética Automotiva**, utilizando uma arquitetura de microsserviços com Docker Compose.
+Sistema completo de **agendamento online** desenvolvido para a **INNOV CAR Estética Automotiva**, utilizando **arquitetura de microsserviços** com **Docker Compose**.  
+O projeto foi criado para oferecer uma experiência moderna e integrada, com autenticação social, interface responsiva e gerenciamento eficiente de agendamentos.
 
-- **Backend:** Laravel (PHP 8.2) + PostgreSQL + Laravel Sanctum/Socialite (Login Social).
-- **Frontend:** React (Vite/TypeScript) + Tailwind CSS (com paleta de cores customizada).
+---
 
-## 🛠️ Pré-requisitos
+## 🧩 Tecnologias Utilizadas
 
-Certifique-se de ter instalado em sua máquina:
-1.  **Docker Desktop** (com Docker Compose).
-2.  **Node.js** e **npm** (para o Frontend React).
-3.  **Composer** (para instalação inicial do Laravel).
+**Backend**
+- [Laravel 11 (PHP 8.2)](https://laravel.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Laravel Sanctum](https://laravel.com/docs/sanctum) e [Laravel Socialite](https://laravel.com/docs/socialite)
 
-## 💡 Estrutura do Projeto
+**Frontend**
+- [React](https://react.dev/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/) com **paleta de cores personalizada INNOV CAR**
 
-Acesse a pasta raiz do seu projeto (`/lavajato`).
+**Infraestrutura**
+- [Docker](https://www.docker.com/) + [Docker Compose](https://docs.docker.com/compose/)
 
-## ⚙️ Guia de Inicialização em 4 Passos (Comandos)
+---
 
-Execute todos os comandos no terminal, a partir da **pasta raiz** do projeto (`/lavajato`).
+## ⚙️ Pré-requisitos
 
-### Passo 1: Configuração Inicial e Instalações
+Antes de iniciar o projeto, certifique-se de ter instalado:
 
-### 1. Criar o arquivo de variáveis de ambiente do Docker
+1. 🐳 **Docker Desktop** (com Docker Compose habilitado)  
+2. 🟢 **Node.js** e **npm**  
+3. 🎼 **Composer** (para gerenciar dependências do Laravel)
+
+---
+
+## 🧭 Estrutura do Projeto
+
+A estrutura principal do projeto se encontra dentro da pasta raiz `/lavajato`:
+
+```
+/lavajato
+├── backend/        # API Laravel + PostgreSQL
+├── frontend/       # Interface React + Tailwind
+├── docker-compose.yml
+└── .env
+```
+
+---
+
+## 🚀 Guia de Inicialização em 4 Passos
+
+Execute todos os comandos a partir da **pasta raiz** (`/lavajato`).
+
+---
+
+### 🧱 Passo 1 — Configuração Inicial
+
+#### 1. Criar o arquivo de variáveis de ambiente do Docker
+```bash
 touch .env
+```
 
-### 2. Navegar para a pasta do Backend e instalar o Laravel
+#### 2. Instalar o Laravel (Backend)
+```bash
 cd backend
 composer create-project laravel/laravel .
+```
 
-### 3. Copiar o arquivo .env de exemplo e criar a migração dos serviços
+#### 3. Copiar o arquivo de ambiente e criar a migração inicial
+```bash
 cp .env.example .env
 php artisan make:migration create_services_table
-# Crie as migrações restantes (appointments, payment, etc.)
+# Crie também as migrações: appointments, payment, etc.
+```
 
-### 4. Voltar para a pasta raiz
+#### 4. Voltar para a pasta raiz
+```bash
 cd ..
+```
 
-### 5. Instalar o projeto Frontend (React/Vite) e configurar o Tailwind
+#### 5. Instalar e configurar o Frontend (React + Tailwind)
+```bash
 cd frontend
 npm create vite@latest . -- --template react-ts
 npm install
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
-### (Neste ponto, configure o tailwind.config.js com as cores da Innov Car)
-cd ..
+```
 
-## Configuração do Back-End
+💡 *Não esqueça de configurar o `tailwind.config.js` com as cores da marca INNOV CAR.*
 
-### 1. Acessar o Contêiner Laravel (backend)
+---
+
+### ⚙️ Passo 2 — Configuração do Backend
+
+#### 1. Acessar o contêiner Laravel
+```bash
 docker exec -it laravel-app sh
+```
 
-### 2. **DENTRO DO CONTÊINER (sh):** Gerar APP_KEY e corrigir permissões
+#### 2. Gerar APP_KEY e corrigir permissões
+```bash
 chmod -R 775 storage bootstrap/cache
 php artisan key:generate
+```
 
-### 3. **DENTRO DO CONTÊINER (sh):** Instalar Laravel Socialite e limpar cache
+#### 3. Instalar Socialite e limpar cache
+```bash
 composer require laravel/socialite
 composer dump-autoload
 php artisan optimize:clear
+```
 
-### 4. **DENTRO DO CONTÊINER (sh):** Rodar Migrações e Seeder
-# O comando abaixo limpa o DB, cria as tabelas (services, appointments, etc.) e popula o catálogo.
+#### 4. Executar migrações e seeders
+```bash
 php artisan migrate:fresh --seed
+```
 
-### 5. Sair do Contêiner
+*(Este comando limpa o banco, recria as tabelas e popula o catálogo inicial.)*
+
+#### 5. Sair do contêiner
+```bash
 exit
+```
+
+---
+
+## 🧠 Dicas de Desenvolvimento
+
+- Após alterar variáveis do `.env`, reinicie os contêineres:
+  ```bash
+  docker-compose down && docker-compose up -d --build
+  ```
+- Use o **Hot Reload do Vite** para atualizar automaticamente o frontend.
+- Teste consultas no Laravel usando:
+  ```bash
+  php artisan tinker
+  ```
+
+---
+
+## 🧰 Possíveis Melhorias Futuras
+
+- Integração com **gateway de pagamento** (ex: Mercado Pago, Stripe)  
+- Dashboard administrativo com **gráficos de agendamentos**  
+- Notificações automáticas via **WhatsApp ou e-mail**  
+- Suporte multi-empresa (multi-tenant)  
+- Histórico de agendamentos com relatórios detalhados  
+
+---
+
+## 👨‍💻 Autor
+
+**Otacílio Neto**  
+Desenvolvedor Full Stack • Estudante de ADS  
+
+## 📄 Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
