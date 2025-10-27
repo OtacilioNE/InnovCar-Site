@@ -1,0 +1,23 @@
+FROM php:8.2-fpm-alpine
+
+# Instalação de dependências do sistema e extensões PHP
+RUN apk add --no-cache \
+    postgresql-dev \
+    git \
+    curl \
+    libxml2-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo pdo_pgsql
+
+# Instalação do Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Configuração do diretório de trabalho
+WORKDIR /var/www/html
+
+# Permissões do usuário (Mantemos esta para garantir que o PHP-FPM possa escrever)
+RUN chown -R www-data:www-data /var/www/html
+
+# Porta exposta
+EXPOSE 80

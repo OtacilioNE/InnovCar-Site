@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # 1. Serviço de Backend: Laravel API (Porta 8000)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.laravel
+    container_name: laravel-app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html # Mapeia seu código Laravel para o contêiner
+    environment:
+      # Variáveis de Conexão com o PostgreSQL
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Outras variáveis do Laravel
+      APP_ENV: local
+      APP_KEY: base64:your_app_key_here # Substitua pela chave gerada (php artisan key:generate)
+    depends_on:
+      - db
+
+  # 2. Serviço de Banco de Dados: PostgreSQL (Porta 5432)
+  db:
+    image: postgres:14-alpine
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Volume persistente para os dados
+    ports:
+      - "5432:5432"
+
+  # 3. Serviço de Frontend: React/Node (Porta 3000)
+  node_react:
+    image: node:18-alpine
+    container_name: react-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app # Mapeia seu código React para o contêiner
+    ports:
+      - "3000:3000" # Servidor de desenvolvimento do React
+    command: npm run dev # Comando para iniciar o servidor de desenvolvimento
+    tty: true
+
+volumes:
+  postgres_data:
